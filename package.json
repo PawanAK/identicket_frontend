@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && npm run generate-sw",
-    "generate-sw": "workbox generateSW workbox-config.js",
+    "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-sw": "workbox generateSW workbox-config.js"
   },
   "dependencies": {
     "qrcode.react": "^3.1.0",
