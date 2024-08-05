@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LandingPage from './components/LandingPage';
 import TicketBooking from './components/TicketBooking';
 import Ticket from './components/Ticket';
+import InstallPWA from './components/InstallPWA';
 import './index.css';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
           <Route path="/booking" element={<TicketBooking />} />
           <Route path="/ticket" element={<Ticket />} />
         </Routes>
+        <InstallPWA />
       </div>
     </Router>
   );
