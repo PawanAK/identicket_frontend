@@ -33,22 +33,23 @@ const PassBooking = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-gray-800 p-8 rounded-xl shadow-lg">
-      <h2 className="text-3xl font-extrabold text-white text-center mb-6">Book a Daily Pass</h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="flex items-center justify-between text-sm text-gray-300">
-          <div>Daily Pass</div>
-          <div>Price: ${price}</div>
-        </div>
-        <div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 to-indigo-600 flex items-center justify-center px-4">
+      <div className="max-w-md w-full bg-white bg-opacity-10 rounded-lg shadow-lg p-8 backdrop-blur-md">
+        <h2 className="text-3xl font-bold text-center text-white mb-8">Book a Daily Pass</h2>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="text-sm font-medium text-gray-200">Daily Pass</div>
+            <div className="text-lg font-bold text-white">₹{price}</div>
+          </div>
+          <p className="text-sm text-gray-300">Valid for 24 hours from purchase</p>
           <button
             type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300 transform hover:scale-105"
           >
             Buy Pass
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };
