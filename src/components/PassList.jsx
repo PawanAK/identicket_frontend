@@ -26,11 +26,14 @@ const PassList = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {passes.map((pass) => (
-        <div key={pass.id} className="bg-white rounded-lg shadow-md p-4">
-          <h3 className="text-lg font-semibold mb-2">Daily Pass</h3>
-          <p className="text-gray-600">Valid until: {new Date(pass.validUntil).toLocaleDateString()}</p>
-          <p className="text-gray-600">Price: ${pass.price}</p>
-        </div>
+        <Link to={`/pass/${pass.passId}`} key={pass.passId} className="block">
+          <div className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition duration-300">
+            <h3 className="text-lg font-semibold mb-2">Daily Pass</h3>
+            <p className="text-gray-600">Valid until: {new Date(pass.validUntil).toLocaleDateString()}</p>
+            <p className="text-gray-600">Price: ${pass.price}</p>
+            <p className="text-gray-600">Status: {pass.validationStatus ? 'Validated' : 'Not Validated'}</p>
+          </div>
+        </Link>
       ))}
     </div>
   );

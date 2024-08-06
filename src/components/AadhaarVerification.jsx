@@ -10,14 +10,25 @@ const AadhaarVerification = () => {
   useEffect(() => {
     console.log('Anon Aadhaar status:', anonAadhaar.status);
     if (anonAadhaar.status === 'logged-in') {
-      // Fetch user details from localStorage
       const username = localStorage.getItem('username');
-      const metamaskAddress = localStorage.getItem('metamaskAddress');
-      const petraAddress = localStorage.getItem('petraAddress');
-      setUserDetails({ username, metamaskAddress, petraAddress });
+      const userId = localStorage.getItem('userId');
+      setUserDetails({ username, userId });
 
-      // Navigate to booking after a short delay
-      setTimeout(() => navigate('/booking'), 3000);
+      // Update auth status on the server
+      fetch('http://localhost:3000/update-auth-status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username }),
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Auth status updated:', data);
+          // Navigate to dashboard after a short delay
+          setTimeout(() => navigate('/dashboard'), 3000);
+        })
+        .catch(error => console.error('Error updating auth status:', error));
     }
   }, [anonAadhaar, navigate]);
 
@@ -26,7 +37,7 @@ const AadhaarVerification = () => {
       <div className="max-w-md w-full space-y-8 bg-gray-800 p-8 rounded-xl shadow-lg">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-white">Verify Aadhaar</h2>
         <div className="mt-8 space-y-6">
-          <LogInWithAnonAadhaar nullifierSeed={1234} />
+          <LogInWithAnonAadhaar nullifierSeed={7745724286022112881059541887210226} />
           {anonAadhaar.status === 'logging-in' && (
             <p className="text-center text-white">Verifying your Aadhaar...</p>
           )}
@@ -36,11 +47,10 @@ const AadhaarVerification = () => {
               {userDetails && (
                 <div>
                   <p><strong>Username:</strong> {userDetails.username}</p>
-                  <p><strong>Metamask:</strong> {userDetails.metamaskAddress.slice(0, 6)}...{userDetails.metamaskAddress.slice(-4)}</p>
-                  <p><strong>Petra:</strong> {userDetails.petraAddress.slice(0, 6)}...{userDetails.petraAddress.slice(-4)}</p>
+                  <p><strong>User ID:</strong> {userDetails.userId}</p>
                 </div>
               )}
-              <p className="text-center mt-4">Redirecting to booking page...</p>
+              <p className="text-center mt-4">Redirecting to dashboard...</p>
             </div>
           )}
         </div>

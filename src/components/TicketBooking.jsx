@@ -30,8 +30,7 @@ const TicketBooking = () => {
       username,
       start: selectedStart,
       end: selectedEnd,
-      dailyPass: ticketType === 'daily',
-      price: ticketType === 'daily' ? 5 : prices[selectedStart][selectedEnd],
+      price: calculatePrice(),
     };
 
     try {
@@ -47,7 +46,7 @@ const TicketBooking = () => {
       if (response.ok) {
         const newTicket = await response.json();
         console.log('Ticket created successfully:', newTicket);
-        navigate(`/ticket/${newTicket.id}`);
+        navigate(`/ticket/${newTicket.ticketId}`);
       } else {
         const errorData = await response.json();
         console.error('Failed to purchase ticket:', errorData);

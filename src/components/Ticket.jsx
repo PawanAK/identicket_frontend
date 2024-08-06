@@ -42,6 +42,7 @@ const Ticket = () => {
             <p className="text-gray-700"><strong>To:</strong> {ticket.end}</p>
             <p className="text-gray-700"><strong>Type:</strong> {ticket.dailyPass ? 'Daily Pass' : 'Single Journey'}</p>
             <p className="text-gray-700"><strong>Price:</strong> ${ticket.price}</p>
+            <p className="text-gray-700"><strong>Status:</strong> {ticket.validationStatus ? 'Validated' : 'Not Validated'}</p>
           </div>
           <div className="flex justify-center">
             <QRCode value={ticketData} size={200} />

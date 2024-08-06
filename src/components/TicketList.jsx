@@ -26,11 +26,12 @@ const TicketList = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {tickets.map((ticket) => (
-        <Link to={`/ticket/${ticket.id}`} key={ticket.id} className="block">
+        <Link to={`/ticket/${ticket.ticketId}`} key={ticket.ticketId} className="block">
           <div className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition duration-300">
             <h3 className="text-lg font-semibold mb-2">{ticket.start} to {ticket.end}</h3>
             <p className="text-gray-600">Type: {ticket.dailyPass ? 'Daily Pass' : 'Single Journey'}</p>
             <p className="text-gray-600">Price: ${ticket.price}</p>
+            <p className="text-gray-600">Status: {ticket.validationStatus ? 'Validated' : 'Not Validated'}</p>
           </div>
         </Link>
       ))}

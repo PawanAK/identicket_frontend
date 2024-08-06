@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { LogInWithAnonAadhaar, useAnonAadhaar } from '@anon-aadhaar/react';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const navigate = useNavigate();
+  const [anonAadhaar] = useAnonAadhaar();
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
@@ -18,14 +20,19 @@ const Login = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ username }),
-      });      if (response.ok) {
-        const userData = await response.json();
-        localStorage.setItem('username', userData.username);
-        localStorage.setItem('metamaskAddress', userData.metamaskAddress);
-        localStorage.setItem('petraAddress', userData.petraAddress);
-        navigate('/dashboard');
+      });
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('username', data.username);
+        localStorage.setItem('userId', data.userId);
+        if (data.requiresAadhaar) {
+          navigate('/aadhaar-verification');
+        } else {
+          navigate('/dashboard');
+        }
       } else {
-        alert("User not found. Please sign up.");
+        const errorData = await response.json();
+        console.error('Login failed:', errorData.error);
       }
     } catch (error) {
       console.error("Error during login:", error);

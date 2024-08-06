@@ -6,6 +6,7 @@ const SignUp = () => {
   const [metamaskAddress, setMetamaskAddress] = useState('');
   const [petraAddress, setPetraAddress] = useState('');
   const navigate = useNavigate();
+  const [error, setError] = useState('');
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
@@ -58,18 +59,19 @@ const SignUp = () => {
           body: JSON.stringify(userData),
         });
         if (response.ok) {
-          console.log("User data saved successfully");
+          const data = await response.json();
+          console.log('User registered successfully:', data);
           navigate('/login');
         } else {
           const errorData = await response.json();
-          alert(errorData.error || "Failed to sign up");
+          setError(errorData.error || 'Failed to register');
         }
       } catch (error) {
-        console.error("Error during signup:", error);
-        alert("An error occurred during signup");
+        console.error('Error:', error);
+        setError('An error occurred while registering');
       }
     } else {
-      alert("Please fill in all fields and connect both wallets.");
+      setError("Please fill in all fields and connect both wallets.");
     }
   };
 
