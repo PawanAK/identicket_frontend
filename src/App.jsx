@@ -13,6 +13,7 @@ import PassList from './components/PassList';
 import Profile from './components/Profile';
 import Pass from './components/Pass';
 import AadhaarVerification from './components/AadhaarVerification';
+import PassBooking from './components/PassBooking'; // New import for PassBooking component
 import './index.css';
 
 function App() {
@@ -34,8 +35,9 @@ function App() {
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/aadhaar-verification" element={<AadhaarVerification />} />
                 <Route path="/dashboard" element={<Dashboard />}>
-                  <Route index element={<Navigate to="/dashboard/booking" replace />} />
-                  <Route path="booking" element={<TicketBooking />} />
+                  <Route index element={<Navigate to="/dashboard" replace />} />
+                  <Route path="ticket-booking" element={<TicketBooking />} />
+                  <Route path="pass-booking" element={<PassBooking />} />
                   <Route path="tickets" element={<TicketList />} />
                   <Route path="passes" element={<PassList />} />
                   <Route path="profile" element={<Profile />} />

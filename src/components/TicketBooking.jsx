@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const stations = ['A', 'B', 'C', 'D'];
+const stations = ['Margao', 'Vasco da Gama', 'Ponda', 'Mapusa'];
 const prices = {
-  A: { B: 1, C: 2, D: 3 },
-  B: { A: 1, C: 1, D: 2 },
-  C: { A: 2, B: 1, D: 1 },
-  D: { A: 3, B: 2, C: 1 },
+  'Margao': { 'Vasco da Gama': 10, 'Ponda': 15, 'Mapusa': 20 },
+  'Vasco da Gama': { 'Margao': 10, 'Ponda': 12, 'Mapusa': 18 },
+  'Ponda': { 'Margao': 15, 'Vasco da Gama': 12, 'Mapusa': 10 },
+  'Mapusa': { 'Margao': 20, 'Vasco da Gama': 18, 'Ponda': 10 },
 };
 
 const TicketBooking = () => {
   const [selectedStart, setSelectedStart] = useState(stations[0]);
   const [selectedEnd, setSelectedEnd] = useState(stations[stations.length - 1]);
-  const [ticketType, setTicketType] = useState('onetime');
   const navigate = useNavigate();
 
   const handleStartChange = (event) => {
@@ -26,7 +25,7 @@ const TicketBooking = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const username = localStorage.getItem('username');
-    const ticketDetails = {
+    const details = {
       username,
       start: selectedStart,
       end: selectedEnd,
@@ -34,13 +33,12 @@ const TicketBooking = () => {
     };
 
     try {
-      console.log('Sending ticket details:', ticketDetails);
       const response = await fetch('http://localhost:3000/tickets', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(ticketDetails),
+        body: JSON.stringify(details),
       });
 
       if (response.ok) {
@@ -57,7 +55,6 @@ const TicketBooking = () => {
   };
 
   const calculatePrice = () => {
-    if (ticketType === 'daily') return 5;
     return prices[selectedStart][selectedEnd];
   };
 
@@ -67,62 +64,44 @@ const TicketBooking = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-4">
           <div>
-            <label htmlFor="ticketType" className="block text-sm font-medium text-gray-300">
-              Ticket Type
+            <label htmlFor="startStation" className="block text-sm font-medium text-gray-300">
+              Start Station
             </label>
             <select
-              id="ticketType"
-              value={ticketType}
-              onChange={(e) => setTicketType(e.target.value)}
+              id="startStation"
+              value={selectedStart}
+              onChange={handleStartChange}
               className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
-              <option value="onetime">One-Time Ticket</option>
-              <option value="daily">Daily Pass</option>
+              {stations.map((station) => (
+                <option key={station} value={station}>
+                  {station}
+                </option>
+              ))}
             </select>
           </div>
-          {ticketType === 'onetime' && (
-            <>
-              <div>
-                <label htmlFor="startStation" className="block text-sm font-medium text-gray-300">
-                  Start Station
-                </label>
-                <select
-                  id="startStation"
-                  value={selectedStart}
-                  onChange={handleStartChange}
-                  className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                >
-                  {stations.map((station) => (
-                    <option key={station} value={station}>
-                      {station}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="endStation" className="block text-sm font-medium text-gray-300">
-                  End Station
-                </label>
-                <select
-                  id="endStation"
-                  value={selectedEnd}
-                  onChange={handleEndChange}
-                  className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                >
-                  {stations.map((station) => (
-                    <option key={station} value={station}>
-                      {station}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </>
-          )}
+          <div>
+            <label htmlFor="endStation" className="block text-sm font-medium text-gray-300">
+              End Station
+            </label>
+            <select
+              id="endStation"
+              value={selectedEnd}
+              onChange={handleEndChange}
+              className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            >
+              {stations.map((station) => (
+                <option key={station} value={station}>
+                  {station}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="flex items-center justify-between text-sm text-gray-300">
-          <div>{ticketType === 'daily' ? 'Daily Pass' : 'One-Time Ticket'}</div>
-          <div>Price: ${calculatePrice()}</div>
+          <div>One-Time Ticket</div>
+          <div>Price: ₹{calculatePrice()}</div>
         </div>
 
         <div>
