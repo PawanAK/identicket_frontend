@@ -25,7 +25,9 @@ const TicketBooking = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const username = localStorage.getItem('username');
+    const userId = localStorage.getItem('userId');
     const details = {
+      userId,
       username,
       start: selectedStart,
       end: selectedEnd,

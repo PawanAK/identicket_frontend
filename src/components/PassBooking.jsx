@@ -8,6 +8,7 @@ const PassBooking = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const username = localStorage.getItem('username');
+    const userId = localStorage.getItem('userId');
     const validUntil = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
 
     try {
@@ -16,7 +17,7 @@ const PassBooking = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, price, validUntil }),
+        body: JSON.stringify({ userId, username, price, validUntil }),
       });
 
       if (response.ok) {
