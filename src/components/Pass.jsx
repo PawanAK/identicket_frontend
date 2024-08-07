@@ -12,7 +12,7 @@ const Pass = () => {
 
   const fetchPass = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/pass/${id}`);
+      const response = await fetch(`https://ticket-backend-j37d.onrender.com/pass/${id}`);
       if (response.ok) {
         const passData = await response.json();
         setPass(passData);

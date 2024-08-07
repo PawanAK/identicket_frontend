@@ -11,7 +11,7 @@ const PassBooking = () => {
     const validUntil = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
 
     try {
-      const response = await fetch('http://localhost:3000/passes', {
+      const response = await fetch('https://ticket-backend-j37d.onrender.com/passes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

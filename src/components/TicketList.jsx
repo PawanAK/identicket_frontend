@@ -11,7 +11,7 @@ const TicketList = () => {
   const fetchTickets = async () => {
     try {
       const username = localStorage.getItem('username');
-      const response = await fetch(`http://localhost:3000/tickets?username=${username}`);
+      const response = await fetch(`https://ticket-backend-j37d.onrender.com/tickets?username=${username}`);
       if (response.ok) {
         const data = await response.json();
         setTickets(data);

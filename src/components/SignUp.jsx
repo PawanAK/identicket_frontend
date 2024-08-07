@@ -51,7 +51,7 @@ const SignUp = () => {
         petraAddress
       };
       try {
-        const response = await fetch('http://localhost:3000/signup', {
+        const response = await fetch('https://ticket-backend-j37d.onrender.com/signup', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

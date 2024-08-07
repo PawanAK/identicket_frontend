@@ -33,7 +33,7 @@ const TicketBooking = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:3000/tickets', {
+      const response = await fetch('https://ticket-backend-j37d.onrender.com/tickets', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

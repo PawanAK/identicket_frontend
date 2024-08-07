@@ -11,7 +11,7 @@ const PassList = () => {
   const fetchPasses = async () => {
     try {
       const username = localStorage.getItem('username');
-      const response = await fetch(`http://localhost:3000/passes?username=${username}`);
+      const response = await fetch(`https://ticket-backend-j37d.onrender.com/passes?username=${username}`);
       if (response.ok) {
         const data = await response.json();
         setPasses(data);

@@ -15,7 +15,7 @@ const AadhaarVerification = () => {
       setUserDetails({ username, userId });
 
       // Update auth status on the server
-      fetch('http://localhost:3000/update-auth-status', {
+      fetch('https://ticket-backend-j37d.onrender.com/update-auth-status', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

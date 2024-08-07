@@ -12,7 +12,7 @@ const Profile = () => {
 
   const fetchUserProfile = async (username) => {
     try {
-      const response = await fetch(`http://localhost:3000/user/${username}`);
+      const response = await fetch(`https://ticket-backend-j37d.onrender.com/user/${username}`);
       if (response.ok) {
         const userData = await response.json();
         setUser(userData);

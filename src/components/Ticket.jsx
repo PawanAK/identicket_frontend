@@ -22,7 +22,7 @@ const Ticket = () => {
 
   const fetchTicket = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/ticket/${id}`);
+      const response = await fetch(`https://ticket-backend-j37d.onrender.com/ticket/${id}`);
       if (response.ok) {
         const ticketData = await response.json();
         setTicket(ticketData);
