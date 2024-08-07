@@ -1,14 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import QRCode from 'qrcode.react';
+import ggwave from 'ggwave';
 
 const Ticket = () => {
   const [ticket, setTicket] = useState(null);
+  const [audioWaveform, setAudioWaveform] = useState(null);
   const { id } = useParams();
+  const audioContext = useRef(null);
+  const audioBuffer = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     fetchTicket();
+    initAudioContext();
   }, [id]);
+
+  const initAudioContext = () => {
+    audioContext.current = new (window.AudioContext || window.webkitAudioContext)();
+  };
 
   const fetchTicket = async () => {
     try {
@@ -16,11 +26,53 @@ const Ticket = () => {
       if (response.ok) {
         const ticketData = await response.json();
         setTicket(ticketData);
+        generateAudioWaveform(ticketData);
       } else {
         console.error('Failed to fetch ticket');
       }
     } catch (error) {
       console.error('Error fetching ticket:', error);
+    }
+  };
+
+  const generateAudioWaveform = async (ticketData) => {
+    try {
+      const ggwaveInstance = await ggwave();
+      const parameters = ggwaveInstance.getDefaultParameters();
+      const instance = ggwaveInstance.init(parameters);
+
+      const payload = JSON.stringify({
+        from: ticketData.start,
+        to: ticketData.end,
+        price: ticketData.price,
+        status: ticketData.validationStatus ? 'Validated' : 'Not Validated'
+      });
+
+      // Check if TxProtocolId exists, if not, use a fallback value
+      const protocolId = ggwaveInstance.TxProtocolId ? 
+        ggwaveInstance.TxProtocolId.GGWAVE_TX_PROTOCOL_AUDIBLE_FAST : 
+        1; // Use 1 as a fallback, or another appropriate value
+
+      const waveform = ggwaveInstance.encode(instance, payload, protocolId, 10);
+      setAudioWaveform(waveform);
+    } catch (error) {
+      console.error('Error generating audio waveform:', error);
+      // Handle the error appropriately, e.g., show an error message to the user
+    }
+  };
+
+  const playAudio = () => {
+    if (audioWaveform && !isPlaying) {
+      setIsPlaying(true);
+      const arrayBuffer = audioContext.current.createBuffer(1, audioWaveform.length, 48000);
+      const channelData = arrayBuffer.getChannelData(0);
+      channelData.set(audioWaveform);
+
+      const source = audioContext.current.createBufferSource();
+      source.buffer = arrayBuffer;
+      source.connect(audioContext.current.destination);
+      source.onended = () => setIsPlaying(false);
+      source.start();
     }
   };
 
@@ -53,6 +105,17 @@ const Ticket = () => {
           <div className="flex justify-center mt-6">
             <QRCode value={ticketData} size={200} level="H" renderAs="svg" />
           </div>
+          <button
+            onClick={playAudio}
+            disabled={isPlaying}
+            className={`mt-4 w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+              isPlaying
+                ? 'bg-indigo-400 cursor-not-allowed'
+                : 'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+            } transition duration-300`}
+          >
+            {isPlaying ? 'Playing Audio...' : 'Play Audio Details'}
+          </button>
         </div>
         <p className="text-sm text-gray-300 text-center mt-4">
           Please show this QR code to the conductor when requested.
