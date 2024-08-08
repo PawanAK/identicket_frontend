@@ -141,8 +141,9 @@ const Ticket = () => {
             <div className="mt-4">
               <button
                 onClick={() => window.open(`https://explorer.aptoslabs.com/account/${ticket.collectionAddress}?network=devnet`, '_blank')}
-                className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+                className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors flex items-center justify-center"
               >
+                <img src="/Aptos.png" alt="Aptos Logo" className="w-5 h-5 mr-2" />
                 View NFT Collection
               </button>
             </div>
