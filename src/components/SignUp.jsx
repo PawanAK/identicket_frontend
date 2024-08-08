@@ -47,8 +47,8 @@ const SignUp = () => {
     if (username && metamaskAddress && petraAddress) {
       const userData = { 
         username, 
-        metamaskAddress, 
-        petraAddress
+        metamask: metamaskAddress, 
+        petraWallet: petraAddress
       };
       try {
         const response = await fetch('https://ticket-backend-j37d.onrender.com/signup', {
