@@ -1,32 +1,36 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import QRCode from 'qrcode.react';
-import ggwave from 'ggwave';
 
 const Ticket = () => {
   const [ticket, setTicket] = useState(null);
-  const [audioWaveform, setAudioWaveform] = useState(null);
+  const [otp, setOtp] = useState('');
+  const [timestamp, setTimestamp] = useState(null);
   const { id } = useParams();
-  const audioContext = useRef(null);
-  const audioBuffer = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     fetchTicket();
-    initAudioContext();
   }, [id]);
 
-  const initAudioContext = () => {
-    audioContext.current = new (window.AudioContext || window.webkitAudioContext)();
-  };
+  useEffect(() => {
+    if (ticket) {
+      const intervalId = setInterval(() => {
+        updateOtpAndTimestamp();
+      }, 3000); // Check every second
+
+      updateOtpAndTimestamp(); // Initial OTP generation
+
+      return () => clearInterval(intervalId);
+    }
+  }, [ticket]);
 
   const fetchTicket = async () => {
     try {
       const response = await fetch(`https://ticket-backend-j37d.onrender.com/ticket/${id}`);
       if (response.ok) {
         const ticketData = await response.json();
+        console.log(ticketData);
         setTicket(ticketData);
-        generateAudioWaveform(ticketData);
       } else {
         console.error('Failed to fetch ticket');
       }
@@ -35,45 +39,66 @@ const Ticket = () => {
     }
   };
 
-  const generateAudioWaveform = async (ticketData) => {
-    try {
-      const ggwaveInstance = await ggwave();
-      const parameters = ggwaveInstance.getDefaultParameters();
-      const instance = ggwaveInstance.init(parameters);
+  const generateOtp = (ticketId, timestamp) => {
+    console.log(`Generating OTP for ticketId: ${ticketId}, timestamp: ${timestamp}`);
+    let tId = parseInt(ticketId);
+    let modTimestamp = parseInt(timestamp) % 1800;
+    console.log(modTimestamp);
+    timestamp = timestamp - modTimestamp;
+    console.log(timestamp);
+    let tStamp = parseInt(timestamp/ 1800);
+    console.log(tStamp);
+    let combined = tId + tStamp;
+    console.log(combined);
+    let hashValue = 5381;
+    console.log(hashValue);
+    for (let i = 0; i < 1; i++) {
+      console.log("initial",i,"value",hashValue);
+      let hash_value_multiplier =(hashValue * 33) ;
+      hashValue = (hash_value_multiplier+ combined);
+      let power=10**8;
+      hashValue = hashValue % power;
+      console.log("iteration",i,"value",hashValue);
+    }
+    let finalHash=hashValue * 999;
+    console.log(finalHash);
+    let otp = finalHash % 1000000;
+    console.log(`Generated OTP: ${otp.toString().padStart(6, '0')}`);
+    return otp.toString().padStart(6, '0');
+  };
 
-      const payload = JSON.stringify({
-        from: ticketData.start,
-        to: ticketData.end,
-        price: ticketData.price,
-        status: ticketData.validationStatus ? 'Validated' : 'Not Validated'
-      });
+  const isOtpValid = (generatedTime, currentTime) => {
+    const isValid = currentTime - generatedTime < 300;
+    console.log(`OTP validity check: ${isValid ? 'Valid' : 'Invalid'} (${currentTime - generatedTime} seconds elapsed)`);
+    return isValid;
+  };
 
-      // Check if TxProtocolId exists, if not, use a fallback value
-      const protocolId = ggwaveInstance.TxProtocolId ? 
-        ggwaveInstance.TxProtocolId.GGWAVE_TX_PROTOCOL_AUDIBLE_FAST : 
-        1; // Use 1 as a fallback, or another appropriate value
-
-      const waveform = ggwaveInstance.encode(instance, payload, protocolId, 10);
-      setAudioWaveform(waveform);
-    } catch (error) {
-      console.error('Error generating audio waveform:', error);
-      // Handle the error appropriately, e.g., show an error message to the user
+  const updateOtpAndTimestamp = () => {
+    if (ticket) {
+      const currentTimestamp = Math.floor(Date.now() / 1000);
+      console.log(`Current timestamp: ${currentTimestamp}, Last update: ${timestamp}`);
+      if (!timestamp || !isOtpValid(timestamp, currentTimestamp)) {
+        setTimestamp(currentTimestamp);
+        const newOtp = generateOtp(ticket.ticketId, currentTimestamp);
+        setOtp(newOtp);
+        console.log('OTP updated');
+      } else {
+        console.log('OTP still valid, no update needed');
+      }
     }
   };
 
-  const playAudio = () => {
-    if (audioWaveform && !isPlaying) {
-      setIsPlaying(true);
-      const arrayBuffer = audioContext.current.createBuffer(1, audioWaveform.length, 48000);
-      const channelData = arrayBuffer.getChannelData(0);
-      channelData.set(audioWaveform);
-
-      const source = audioContext.current.createBufferSource();
-      source.buffer = arrayBuffer;
-      source.connect(audioContext.current.destination);
-      source.onended = () => setIsPlaying(false);
-      source.start();
-    }
+  const formatTimestamp = (epochTimestamp) => {
+    const date = new Date(epochTimestamp * 1000);
+    return date.toLocaleString('en-US', { 
+      year: 'numeric', 
+      month: '2-digit', 
+      day: '2-digit', 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      second: '2-digit', 
+      hour12: true 
+    });
   };
 
   if (!ticket) {
@@ -84,7 +109,7 @@ const Ticket = () => {
     );
   }
 
-  const ticketData = JSON.stringify(ticket);
+  const ticketData = JSON.stringify({...ticket, otp});
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 to-indigo-600 flex items-center justify-center px-4">
@@ -101,24 +126,16 @@ const Ticket = () => {
                 {ticket.validationStatus ? 'Validated' : 'Not Validated'}
               </span>
             </p>
+            <p className="text-gray-800"><span className="font-semibold">OTP:</span> {otp}</p>
+            <p className="text-gray-800"><span className="font-semibold">Timestamp:</span> {timestamp}</p>
+            <p className="text-gray-800"><span className="font-semibold">Date & Time:</span> {formatTimestamp(timestamp)}</p>
           </div>
           <div className="flex justify-center mt-6">
             <QRCode value={ticketData} size={200} level="H" renderAs="svg" />
           </div>
-          <button
-            onClick={playAudio}
-            disabled={isPlaying}
-            className={`mt-4 w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
-              isPlaying
-                ? 'bg-indigo-400 cursor-not-allowed'
-                : 'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
-            } transition duration-300`}
-          >
-            {isPlaying ? 'Playing Audio...' : 'Play Audio Details'}
-          </button>
         </div>
         <p className="text-sm text-gray-300 text-center mt-4">
-          Please show this QR code to the conductor when requested.
+          Please show this QR code to the conductor when requested. The OTP refreshes every 5 minutes.
         </p>
       </div>
     </div>
