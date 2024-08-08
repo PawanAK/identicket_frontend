@@ -16,9 +16,9 @@ const Ticket = () => {
     if (ticket) {
       const intervalId = setInterval(() => {
         updateOtpAndTimestamp();
-      }, 3000); // Check every second
+      }, 3000);
 
-      updateOtpAndTimestamp(); // Initial OTP generation
+      updateOtpAndTimestamp();
 
       return () => clearInterval(intervalId);
     }
@@ -89,7 +89,7 @@ const Ticket = () => {
   };
 
   const formatTimestamp = (epochTimestamp) => {
-    const date = new Date(epochTimestamp * 1000);
+    const date = new Date(epochTimestamp);
     return date.toLocaleString('en-US', { 
       year: 'numeric', 
       month: '2-digit', 
@@ -132,13 +132,21 @@ const Ticket = () => {
                 {ticket.validationStatus ? 'Validated' : 'Not Validated'}
               </span>
             </p>
-            {/* <p className="text-gray-800"><span className="font-semibold">OTP:</span> {otp}</p> */}
-            {/* <p className="text-gray-800"><span className="font-semibold">Timestamp:</span> {timestamp}</p> */}
-            <p className="text-gray-800"><span className="font-semibold">Date & Time:</span></p>
+            <p className="text-gray-800"><span className="font-semibold">Date & Time:</span> {formatTimestamp(ticket.createdAt)}</p>
           </div>
           <div className="flex justify-center mt-6">
             <QRCode value={ticketData} size={200} level="H" renderAs="svg" />
           </div>
+          {ticket.collectionAddress && (
+            <div className="mt-4">
+              <button
+                onClick={() => window.open(`https://explorer.aptoslabs.com/account/${ticket.collectionAddress}`, '_blank')}
+                className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+              >
+                View NFT Collection
+              </button>
+            </div>
+          )}
         </div>
         <p className="text-sm text-gray-300 text-center mt-4">
           Please show this QR code to the conductor when requested. The OTP refreshes every 5 minutes.
