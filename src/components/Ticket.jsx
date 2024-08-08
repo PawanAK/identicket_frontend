@@ -140,7 +140,7 @@ const Ticket = () => {
           {ticket.collectionAddress && (
             <div className="mt-4">
               <button
-                onClick={() => window.open(`https://explorer.aptoslabs.com/account/${ticket.collectionAddress}`, '_blank')}
+                onClick={() => window.open(`https://explorer.aptoslabs.com/account/${ticket.collectionAddress}?network=devnet`, '_blank')}
                 className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
               >
                 View NFT Collection
