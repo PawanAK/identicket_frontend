@@ -50,6 +50,7 @@ const SignUp = () => {
         metamask: metamaskAddress, 
         petraWallet: petraAddress
       };
+      console.log('User data to be sent:', userData); // Log user data
       try {
         const response = await fetch('https://ticket-backend-j37d.onrender.com/signup', {
           method: 'POST',
@@ -64,6 +65,7 @@ const SignUp = () => {
           navigate('/login');
         } else {
           const errorData = await response.json();
+          console.log('Error data:', errorData); // Log error data
           setError(errorData.error || 'Failed to register');
         }
       } catch (error) {
@@ -74,7 +76,6 @@ const SignUp = () => {
       setError("Please fill in all fields and connect both wallets.");
     }
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 to-indigo-800 flex items-center justify-center px-4">
       <div className="max-w-md w-full space-y-8 bg-gray-800 p-8 rounded-xl shadow-lg">
