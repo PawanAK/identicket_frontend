@@ -132,9 +132,9 @@ const Ticket = () => {
                 {ticket.validationStatus ? 'Validated' : 'Not Validated'}
               </span>
             </p>
-            <p className="text-gray-800"><span className="font-semibold">OTP:</span> {otp}</p>
-            <p className="text-gray-800"><span className="font-semibold">Timestamp:</span> {timestamp}</p>
-            <p className="text-gray-800"><span className="font-semibold">Date & Time:</span> {formatTimestamp(timestamp)}</p>
+            {/* <p className="text-gray-800"><span className="font-semibold">OTP:</span> {otp}</p> */}
+            {/* <p className="text-gray-800"><span className="font-semibold">Timestamp:</span> {timestamp}</p> */}
+            <p className="text-gray-800"><span className="font-semibold">Date & Time:</span></p>
           </div>
           <div className="flex justify-center mt-6">
             <QRCode value={ticketData} size={200} level="H" renderAs="svg" />
