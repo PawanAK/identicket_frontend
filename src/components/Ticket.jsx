@@ -109,7 +109,13 @@ const Ticket = () => {
     );
   }
 
-  const ticketData = JSON.stringify({...ticket, otp});
+  const ticketData = JSON.stringify({
+    ...ticket,
+    otp,
+    username: ticket.username,
+    computeId: ticket.computeId,
+    storeId: ticket.storeId,
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 to-indigo-600 flex items-center justify-center px-4">
