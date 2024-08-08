@@ -42,11 +42,11 @@ const Ticket = () => {
   const generateOtp = (ticketId, timestamp) => {
     console.log(`Generating OTP for ticketId: ${ticketId}, timestamp: ${timestamp}`);
     let tId = parseInt(ticketId);
-    let modTimestamp = parseInt(timestamp) % 1800;
+    let modTimestamp = parseInt(timestamp) % 900;
     console.log(modTimestamp);
     timestamp = timestamp - modTimestamp;
     console.log(timestamp);
-    let tStamp = parseInt(timestamp/ 1800);
+    let tStamp = parseInt(timestamp/ 900);
     console.log(tStamp);
     let combined = tId + tStamp;
     console.log(combined);
